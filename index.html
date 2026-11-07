@@ -1,0 +1,459 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Get Moving</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one column — tabs for Learn (8 animated cards), Task 1 (watch & choose), Task 2 (complete the sentence) */
+:root{
+  --bg:#FFFFFF; --surface:#F3F8FF; --stage:#EAF3FF; --ink:#12284A; --muted:#55657F; --line-ui:#D3E3F7;
+  --primary:#0A7BFF; --primary-soft:#DCEBFF; --sun:#FFC531; --on-sun:#12284A; --tab-sub:#DCEBFF;
+  --good:#1FA67A; --good-soft:#DDF6EC; --bad:#E0483A; --bad-soft:#FFE3DF;
+  /* character colours (same in both themes) */
+  --blue:#0A7BFF; --blue-d:#0866D6; --skin:#3B7DFF; --line:#1C3FE6; --yellow:#FFC531; --yellow-d:#E2A92A; --water:#BFDBFF;
+  --display:"Baloo 2","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1D35; --surface:#15294A; --stage:#1B3358; --ink:#EEF5FF; --muted:#A9BCD8; --line-ui:#2A4570;
+  --primary:#4D97FF; --primary-soft:#1D3966; --good:#46D19F; --good-soft:#163A30; --bad:#FF7A6C; --bad-soft:#41201E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1D35; --surface:#15294A; --stage:#1B3358; --ink:#EEF5FF; --muted:#A9BCD8; --line-ui:#2A4570;
+  --primary:#4D97FF; --primary-soft:#1D3966; --good:#46D19F; --good-soft:#163A30; --bad:#FF7A6C; --bad-soft:#41201E; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.level{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--on-sun);background:var(--sun);padding:4px 12px;border-radius:999px;display:inline-block}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,6vw,2.9rem);line-height:1.05;margin:6px 0 0;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0}
+.speed{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line-ui);border-radius:999px;padding:4px}
+.speed button{border:0;background:transparent;color:var(--muted);font:800 .9rem var(--body);padding:8px 14px;border-radius:999px;cursor:pointer}
+.speed button[aria-pressed="true"]{background:var(--primary);color:#fff}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab{border:2px solid var(--line-ui);background:var(--surface);color:var(--ink);border-radius:16px;padding:12px 8px;font:800 1rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab small{font-weight:700;color:var(--muted);font-size:.8rem;text-align:center}
+.tab[aria-selected="true"]{border-color:var(--primary);background:var(--primary);color:#fff}
+.tab[aria-selected="true"] small{color:var(--tab-sub)}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:16px}
+.hint{background:var(--surface);border:1px dashed var(--line-ui);border-radius:14px;padding:12px 16px;color:var(--muted);margin:0}
+.hint b{color:var(--ink)}
+.novoice{background:var(--bad-soft);border-radius:14px;padding:12px 16px;margin:0}
+
+/* learn cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:860px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:2px solid var(--line-ui);border-radius:22px;padding:10px 10px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stage{background:var(--stage);border-radius:16px;aspect-ratio:26/25;max-width:100%;overflow:hidden}
+.stage svg{display:block;width:100%;height:100%}
+.tag{align-self:flex-start;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);background:var(--primary-soft);padding:2px 10px;border-radius:999px;margin-top:4px}
+.phrase{font-family:var(--display);font-weight:800;font-size:1.35rem;line-height:1.15;margin:0}
+.mean{color:var(--muted);font-size:.9rem;margin:0}
+.ex{font-size:.95rem;margin:0}
+.listen{align-self:flex-start;margin-top:4px;border:0;background:var(--sun);color:var(--on-sun);font:800 .9rem var(--body);padding:8px 16px;border-radius:999px;cursor:pointer}
+.listen:hover{filter:brightness(1.05)}
+
+/* tasks */
+.box{background:var(--surface);border:2px solid var(--line-ui);border-radius:24px;padding:22px clamp(16px,4vw,32px);display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+.progress{width:100%;display:flex;align-items:center;gap:10px;font-weight:800;color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.bar{flex:1;height:10px;background:var(--primary-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--primary);transition:width .3s}
+.big-stage{width:min(340px,100%)}
+.q{font-family:var(--display);font-weight:800;font-size:1.3rem;margin:0}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:560px}
+.choice{border:2px solid var(--line-ui);background:var(--bg);color:var(--ink);border-radius:16px;padding:14px 10px;cursor:pointer;font:800 1.1rem var(--body);min-height:58px}
+.choice:hover:not(:disabled){border-color:var(--primary)}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.choice:disabled{cursor:default}
+.t2-grid{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:center;width:100%;text-align:left}
+@media (max-width:600px){.t2-grid{grid-template-columns:1fr;text-align:center}.t2-grid .stage{max-width:240px;margin:0 auto;width:100%}}
+.mystery{display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:4rem;color:var(--primary)}
+.sentence{font-family:var(--display);font-weight:800;font-size:clamp(1.3rem,4vw,1.7rem);line-height:1.3;margin:0;text-wrap:balance}
+.gap{display:inline-block;min-width:5em;border-bottom:3px solid var(--primary);color:var(--primary);text-align:center}
+.t2-choices{grid-template-columns:repeat(3,1fr);max-width:none}
+@media (max-width:600px){.t2-choices{grid-template-columns:1fr}}
+.feedback{min-height:1.6em;font-weight:800;font-size:1.05rem;margin:0}
+.feedback.ok{color:var(--good)} .feedback.no{color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{border:2px solid var(--primary);background:transparent;color:var(--primary);font:800 1rem var(--body);padding:10px 22px;border-radius:999px;cursor:pointer}
+.btn.solid{background:var(--primary);color:#fff}
+.stars{font-size:2.6rem;letter-spacing:4px}
+.score{font-family:var(--display);font-weight:800;font-size:2.4rem;margin:0;font-variant-numeric:tabular-nums}
+
+/* ===== character ===== */
+.limb{fill:none;stroke:var(--blue);stroke-width:18;stroke-linecap:round}
+.limb.back{stroke:var(--blue-d)}
+.foot{stroke:var(--blue);stroke-width:12;stroke-linecap:round}
+.foot.back{stroke:var(--blue-d)}
+.hand{fill:var(--blue)} .hand.back{fill:var(--blue-d)}
+.torso{fill:var(--blue)} .skin{fill:var(--skin)}
+.ln{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pupil{fill:var(--line)} .eye{fill:#fff}
+.y{fill:var(--yellow)} .yd{fill:var(--yellow-d)}
+.ys{fill:none;stroke:var(--yellow);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.ground{stroke:var(--line);stroke-width:2.5;stroke-linecap:round}
+.dashes{stroke:var(--line);stroke-width:2.5;stroke-dasharray:18 22;animation:dash .5s linear infinite}
+.speedl{stroke:var(--primary);stroke-width:3;stroke-linecap:round;opacity:.5;animation:whoosh .7s linear infinite}
+.lbl{fill:var(--ink);font:800 11px var(--body);text-anchor:middle}
+.svgtxt{fill:var(--ink);font:800 11px var(--body)}
+.fig,.armA,.armB,.fore,.legA,.legB,.shin{transform-box:view-box}
+.armA,.armB{transform-origin:100px 84px}
+.fore{transform-origin:100px 116px}
+.legA,.legB{transform-origin:100px 150px}
+.shin{transform-origin:100px 190px}
+.pop,.spin,.breath,.fillbar{transform-box:fill-box;transform-origin:center}
+.fillbar{transform-origin:50% 100%}
+@keyframes dash{to{stroke-dashoffset:40}}
+@keyframes whoosh{from{transform:translateX(30px);opacity:0}40%{opacity:.6}to{transform:translateX(-30px);opacity:0}}
+@keyframes bob{to{transform:translateY(-5px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes popLoop{0%{transform:scale(0);opacity:0}8%{transform:scale(1.15);opacity:1}12%,88%{transform:scale(1);opacity:1}100%{transform:scale(0);opacity:0}}
+
+/* run */
+.s-run .fig{animation:bob .3s ease-in-out infinite alternate}
+.s-run .legA,.s-run .legB{animation:runT .6s ease-in-out infinite alternate}
+.s-run .legA .shin,.s-run .legB .shin{animation:runS .6s ease-in-out infinite alternate}
+.s-run .armA,.s-run .armB{animation:runArm .6s ease-in-out infinite alternate}
+.s-run .legB,.s-run .legB .shin,.s-run .armA{animation-delay:-.6s}
+.s-run .fore{transform:rotate(-80deg)}
+@keyframes runT{from{transform:rotate(-45deg)}to{transform:rotate(35deg)}}
+@keyframes runS{from{transform:rotate(20deg)}to{transform:rotate(85deg)}}
+@keyframes runArm{from{transform:rotate(-40deg)}to{transform:rotate(40deg)}}
+
+/* working out: dumbbell curls */
+.s-lift .armA,.s-lift .armB{transform:rotate(-12deg)}
+.s-lift .fore{animation:curl 1s ease-in-out infinite alternate}
+.s-lift .armA .fore{animation-delay:-1s}
+.s-lift .legA{transform:rotate(8deg)} .s-lift .legB{transform:rotate(-8deg)}
+@keyframes curl{from{transform:rotate(0)}to{transform:rotate(-140deg)}}
+.sweat{animation:drip 1.4s ease-in infinite}
+.sweat.two{animation-delay:-.7s}
+@keyframes drip{from{transform:translateY(0);opacity:1}to{transform:translateY(22px);opacity:0}}
+
+/* yoga */
+.s-yoga .legB{transform:rotate(-70deg)} .s-yoga .legB .shin{transform:rotate(130deg)}
+.s-yoga .armA,.s-yoga .armB{animation:yogaArms 3s ease-in-out infinite alternate}
+@keyframes yogaArms{from{transform:rotate(-15deg)}to{transform:rotate(-178deg)}}
+.breath{animation:breathe 3s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(.6)}to{transform:scale(1.05)}}
+.bin{animation:tIn 6s linear infinite} .bout{animation:tOut 6s linear infinite}
+@keyframes tIn{0%,46%{opacity:1}50%,96%{opacity:0}100%{opacity:1}}
+@keyframes tOut{0%,46%{opacity:0}50%,96%{opacity:1}100%{opacity:0}}
+
+/* bike */
+.s-bike .fig{animation:bob .5s ease-in-out infinite alternate}
+.s-bike .legA,.s-bike .legB{animation:pedT .5s ease-in-out infinite alternate}
+.s-bike .legA .shin,.s-bike .legB .shin{animation:pedS .5s ease-in-out infinite alternate}
+.s-bike .legB,.s-bike .legB .shin{animation-delay:-.5s}
+.s-bike .armA,.s-bike .armB{transform:rotate(-55deg)} .s-bike .fore{transform:rotate(-10deg)}
+@keyframes pedT{from{transform:rotate(-58deg)}to{transform:rotate(-22deg)}}
+@keyframes pedS{from{transform:rotate(98deg)}to{transform:rotate(48deg)}}
+.s-bike .spin{animation:spin 1s linear infinite}
+
+/* exercise: jumping jacks */
+.s-jack .fig{animation:jj .45s ease-in-out infinite alternate}
+.s-jack .armA{animation:jjA .45s ease-in-out infinite alternate}
+.s-jack .armB{animation:jjB .45s ease-in-out infinite alternate}
+.s-jack .legA{animation:jjLA .45s ease-in-out infinite alternate}
+.s-jack .legB{animation:jjLB .45s ease-in-out infinite alternate}
+@keyframes jj{to{transform:translateY(-12px)}}
+@keyframes jjA{from{transform:rotate(15deg)}to{transform:rotate(155deg)}}
+@keyframes jjB{from{transform:rotate(-15deg)}to{transform:rotate(-155deg)}}
+@keyframes jjLA{from{transform:rotate(4deg)}to{transform:rotate(22deg)}}
+@keyframes jjLB{from{transform:rotate(-4deg)}to{transform:rotate(-22deg)}}
+
+/* energetic: big jump */
+.s-energy .fig{animation:jump .7s cubic-bezier(.3,.6,.4,1) infinite alternate}
+.s-energy .armB{animation:pumpB .7s ease-in-out infinite alternate}
+.s-energy .armA{animation:pumpA .7s ease-in-out infinite alternate}
+.s-energy .legA,.s-energy .legB{animation:tuckT .7s ease-in-out infinite alternate}
+.s-energy .shin{animation:tuckS .7s ease-in-out infinite alternate}
+@keyframes jump{to{transform:translateY(-34px)}}
+@keyframes pumpB{from{transform:rotate(-20deg)}to{transform:rotate(-172deg)}}
+@keyframes pumpA{from{transform:rotate(20deg)}to{transform:rotate(-150deg)}}
+@keyframes tuckT{from{transform:rotate(0)}to{transform:rotate(-40deg)}}
+@keyframes tuckS{from{transform:rotate(0)}to{transform:rotate(80deg)}}
+.shadow{fill:var(--line);opacity:.15;transform-box:fill-box;transform-origin:center;animation:shad .7s cubic-bezier(.3,.6,.4,1) infinite alternate}
+@keyframes shad{to{transform:scale(.55)}}
+.bolt{animation:flash .9s steps(1) infinite} .bolt.two{animation-delay:-.45s}
+@keyframes flash{0%{opacity:1}50%{opacity:.15}}
+.fillbar{animation:charge 2.8s ease-in-out infinite}
+@keyframes charge{0%{transform:scaleY(.12)}80%,100%{transform:scaleY(1)}}
+
+/* workout routine: squats + weekly plan */
+.s-routine .fig{animation:sqF 1.2s ease-in-out infinite alternate}
+.s-routine .legA,.s-routine .legB{animation:sqT 1.2s ease-in-out infinite alternate}
+.s-routine .shin{animation:sqS 1.2s ease-in-out infinite alternate}
+.s-routine .armA,.s-routine .armB{animation:sqA 1.2s ease-in-out infinite alternate}
+@keyframes sqF{to{transform:translate(-26px,35px)}}
+@keyframes sqT{to{transform:rotate(-80deg)}}
+@keyframes sqS{to{transform:rotate(100deg)}}
+@keyframes sqA{to{transform:rotate(-88deg)}}
+.tick{fill:none;stroke:var(--primary);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;animation:tick 6s ease infinite both}
+@keyframes tick{0%{stroke-dashoffset:22}8%,86%{stroke-dashoffset:0}94%,100%{stroke-dashoffset:22}}
+
+/* healthy lifestyle */
+.s-healthy .fig{animation:bob 1s ease-in-out infinite alternate}
+.s-healthy .armB{animation:wave .5s ease-in-out infinite alternate}
+.s-healthy .armB .fore{transform:rotate(-55deg)}
+.s-healthy .armA{transform:rotate(-40deg)} .s-healthy .armA .fore{transform:rotate(-75deg)}
+@keyframes wave{from{transform:rotate(-112deg)}to{transform:rotate(-88deg)}}
+.pop{animation:popLoop 6s ease infinite both}
+.beat{transform-box:fill-box;transform-origin:center;animation:beat .8s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.25)}}
+
+@media (prefers-reduced-motion:reduce){svg *{animation-play-state:paused!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <span class="level">English · A2</span>
+      <h1>Get Moving</h1>
+      <p class="sub">Words for exercise and a healthy life. Watch, listen, and practise.</p>
+    </div>
+    <div class="speed" role="group" aria-label="Voice speed">
+      <button type="button" id="spd-slow" data-rate="0.75" aria-pressed="true">🐢 Slow</button>
+      <button type="button" id="spd-normal" data-rate="0.95" aria-pressed="false">🐇 Normal</button>
+    </div>
+  </header>
+
+  <p class="novoice" id="novoice" hidden>This browser cannot play the voice. Please open the page in Chrome, Edge or Safari.</p>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-learn" aria-selected="true" data-panel="learn">Learn<small>8 words</small></button>
+    <button class="tab" role="tab" id="tab-t1" aria-selected="false" data-panel="t1">Task 1<small>Watch &amp; choose</small></button>
+    <button class="tab" role="tab" id="tab-t2" aria-selected="false" data-panel="t2">Task 2<small>Complete the sentence</small></button>
+  </nav>
+
+  <section class="panel" id="learn">
+    <p class="hint">Watch each picture. Press <b>Listen</b> to hear the word and the example. Repeat them out loud.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="panel" id="t1" hidden>
+    <p class="hint"><b>Task 1.</b> Watch the animation. What is the person doing? Choose the correct words.</p>
+    <div class="box" id="t1-box"></div>
+  </section>
+
+  <section class="panel" id="t2" hidden>
+    <p class="hint"><b>Task 2.</b> Read the sentence and choose the missing words. When you are right, you will see the picture and hear the sentence.</p>
+    <div class="box" id="t2-box"></div>
+  </section>
+</div>
+
+<script>
+/* ---------- the character ---------- */
+function person(propA="", propB=""){
+  return `<g class="fig">
+  <g class="legA"><line x1="100" y1="150" x2="100" y2="190" class="limb back"/><g class="shin"><line x1="100" y1="190" x2="100" y2="228" class="limb back"/><path d="M98 229 h14" class="foot back"/></g></g>
+  <g class="armA"><line x1="100" y1="84" x2="100" y2="116" class="limb back"/><g class="fore"><line x1="100" y1="116" x2="100" y2="140" class="limb back"/><circle cx="100" cy="145" r="8" class="hand back"/>${propA}</g></g>
+  <path class="torso" d="M79 84 C79 72 89 68 100 68 C112 68 122 72 122 84 L116 150 C116 158 108 161 100 161 C92 161 85 158 84 150 Z"/>
+  <path class="ln" d="M100 96 v40" opacity=".35"/>
+  <g class="legB"><line x1="100" y1="150" x2="100" y2="190" class="limb"/><g class="shin"><line x1="100" y1="190" x2="100" y2="228" class="limb"/><path d="M98 229 h14" class="foot"/></g></g>
+  <g class="head">
+    <path class="skin" d="M95 32 L95.5 56 C96 66 103 72 111 72 C120 72 126 65 126.5 55 L127 33 Z"/>
+    <path class="skin" d="M87 33 C86 28 90 25 96 25 C102 25 105 22 108 17 C111 11 116 7 123 7 C131 7 137 13 137 21 C137 29 131 35 124 36 L96 37 C91 37 88 36 87 33 Z"/>
+    <path class="ln" d="M126 32 c-6 -1 -9 -8 -5 -12 c4 -4 10 -1 9 4 c-.5 3 -3 4 -5 4"/>
+    <path class="ln" d="M100 41 q3 -4 7 -1"/>
+    <ellipse class="eye" cx="104" cy="46" rx="3.7" ry="4.3"/><circle class="pupil" cx="105" cy="46.5" r="1.9"/>
+    <ellipse class="eye" cx="117.5" cy="46" rx="3.4" ry="4.3"/><circle class="pupil" cx="118.4" cy="46.5" r="1.9"/>
+    <path class="ln" d="M112 43 V55.5 H107"/>
+    <path class="ln" d="M99.5 56.5 q0 7 9.5 6.5"/>
+  </g>
+  <g class="armB"><line x1="100" y1="84" x2="100" y2="116" class="limb"/><g class="fore"><line x1="100" y1="116" x2="100" y2="140" class="limb"/><circle cx="100" cy="145" r="8" class="hand"/>${propB}</g></g>
+</g>`;
+}
+const GROUND = `<path class="ground" d="M-15 238 H215"/>`;
+const MOVING_GROUND = `<path class="dashes" d="M-40 238 H260"/><g><path class="speedl" d="M-20 100 h26"/><path class="speedl" style="animation-delay:-.25s" d="M-26 132 h34"/><path class="speedl" style="animation-delay:-.5s" d="M-14 164 h20"/></g>`;
+const DUMBBELL = `<g><rect x="86" y="142" width="28" height="7" rx="3" class="yd"/><rect x="80" y="135" width="9" height="21" rx="3" class="y"/><rect x="111" y="135" width="9" height="21" rx="3" class="y"/></g>`;
+const APPLE = `<g><circle cx="100" cy="152" r="10" class="y"/><path class="ln" d="M100 142 q1 -5 4 -7"/><path d="M103 141 q6 -6 10 -1 q-5 4 -10 1z" fill="var(--line)"/></g>`;
+
+const SCENES = {
+  lift: () => `${GROUND}
+    <text x="0" y="78" style="font:800 64px var(--display);fill:var(--yellow)" class="reps">1</text>
+    <path class="sweat" d="M136 26 q5 7 0 10 q-5 -3 0 -10z" fill="var(--water)"/>
+    <path class="sweat two" d="M142 40 q4 6 0 9 q-4 -3 0 -9z" fill="var(--water)"/>
+    ${person(DUMBBELL, DUMBBELL)}`,
+  yoga: () => `<circle class="breath" cx="104" cy="112" r="80" fill="var(--yellow)" opacity=".22"/>
+    <rect x="44" y="234" width="120" height="7" rx="3.5" class="y"/>
+    <text x="18" y="60" class="lbl bin" style="font-size:13px">breathe in…</text>
+    <text x="18" y="60" class="lbl bout" style="font-size:13px">breathe out…</text>
+    ${person()}`,
+  run: () => `${MOVING_GROUND}${person()}`,
+  bike: () => `${MOVING_GROUND}
+    <g class="spin"><circle cx="64" cy="206" r="28" fill="none" stroke="var(--yellow)" stroke-width="6"/><path d="M64 180 V232 M38 206 H90 M46 188 L82 224 M82 188 L46 224" stroke="var(--yellow-d)" stroke-width="2.5"/></g>
+    <g class="spin"><circle cx="164" cy="206" r="28" fill="none" stroke="var(--yellow)" stroke-width="6"/><path d="M164 180 V232 M138 206 H190 M146 188 L182 224 M182 188 L146 224" stroke="var(--yellow-d)" stroke-width="2.5"/></g>
+    <path class="ys" d="M64 206 L108 206 L94 166 Z M94 166 L150 140 M108 206 L150 140 L164 206 M150 140 L148 122 L160 118"/>
+    <path class="ys" d="M82 162 h24" style="stroke-width:8"/>
+    <g class="spin"><path d="M108 191 V221" stroke="var(--yellow-d)" stroke-width="4" stroke-linecap="round"/><circle cx="108" cy="206" r="5" class="yd"/></g>
+    ${person()}`,
+  jack: () => `${GROUND}
+    <path class="ln" d="M40 60 q-10 20 0 40 M168 60 q10 20 0 40" style="stroke-width:3" opacity=".6"/>
+    ${person()}`,
+  energy: () => `<ellipse class="shadow" cx="104" cy="238" rx="34" ry="5"/>${GROUND}
+    <path class="bolt y" d="M28 40 l-12 22 h10 l-8 20 l20 -27 h-10 l8 -15z"/>
+    <path class="bolt two y" d="M160 26 l-10 18 h8 l-6 16 l16 -22 h-8 l6 -12z"/>
+    <rect x="178" y="110" width="28" height="84" rx="5" fill="none" stroke="var(--line)" stroke-width="3"/>
+    <rect x="186" y="104" width="12" height="6" rx="2" fill="var(--line)"/>
+    <rect class="fillbar y" x="183" y="115" width="18" height="74" rx="3"/>
+    ${person()}`,
+  routine: () => `${GROUND}
+    <rect x="140" y="34" width="88" height="160" rx="12" fill="var(--bg)" stroke="var(--primary)" stroke-width="2.5"/>
+    <text x="184" y="56" class="lbl">MY WEEK</text>
+    ${[["Mon","run"],["Wed","yoga"],["Fri","gym"],["Sun","bike"]].map(([d,a],i)=>{
+      const y=82+i*30;
+      return `<text x="150" y="${y+4}" class="svgtxt">${d}</text><text x="178" y="${y+4}" class="svgtxt" style="font-weight:600">${a}</text>
+      <rect x="206" y="${y-8}" width="14" height="14" rx="3" fill="none" stroke="var(--line)" stroke-width="2"/>
+      <path class="tick" style="animation-delay:${i*0.8}s" d="M208 ${y} l4 4 l8 -10"/>`;}).join("")}
+    ${person()}`,
+  healthy: () => `${GROUND}
+    <g transform="translate(2 44)"><g class="pop"><path d="M-15 0 h30 a15 13 0 0 1 -30 0z" class="y"/><circle cx="-7" cy="-3" r="5" fill="var(--blue)"/><circle cx="1" cy="-6" r="5" fill="var(--skin)"/><circle cx="8" cy="-2" r="4.5" fill="var(--blue)"/><text y="28" class="lbl">good food</text></g></g>
+    <g transform="translate(196 42)"><g class="pop" style="animation-delay:.6s"><path d="M-9 -14 h18 l-2.5 27 h-13 z" fill="var(--water)" stroke="var(--line)" stroke-width="2.5" stroke-linejoin="round"/><text y="30" class="lbl">water</text></g></g>
+    <g transform="translate(0 168)"><g class="pop" style="animation-delay:1.2s"><path d="M4 -13 a13 13 0 1 0 9 22 a11 11 0 1 1 -9 -22z" class="y"/><circle cx="14" cy="-10" r="2" class="y"/><text y="28" class="lbl">sleep</text></g></g>
+    <g transform="translate(198 160)"><g class="pop" style="animation-delay:1.8s"><path class="beat y" d="M0 -4 C0 -11 -11 -11 -11 -3 C-11 4 0 9 0 12 C0 9 11 4 11 -3 C11 -11 0 -11 0 -4Z"/><text y="30" class="lbl">move</text></g></g>
+    ${person(APPLE)}`
+};
+function sceneSVG(key, label){
+  return `<svg class="s-${key}" viewBox="-30 0 260 250" role="img" aria-label="${label}">${SCENES[key]()}</svg>`;
+}
+
+/* ---------- words ---------- */
+const WORDS = [
+  {p:"working out", s:"lift", tag:"verb (-ing)", mean:"doing exercise to make your body strong", ex:"Tom is working out at the gym."},
+  {p:"do yoga", s:"yoga", tag:"verb phrase", mean:"stretch your body slowly and breathe deeply", ex:"I do yoga every Sunday morning."},
+  {p:"go for a run", s:"run", tag:"verb phrase", mean:"run outside for exercise", ex:"Let's go for a run in the park."},
+  {p:"healthy lifestyle", s:"healthy", tag:"noun phrase", mean:"good food, water, sleep and exercise every day", ex:"Eating well is part of a healthy lifestyle."},
+  {p:"workout routine", s:"routine", tag:"noun phrase", mean:"your plan for exercise, on the same days every week", ex:"My workout routine is three days a week."},
+  {p:"exercise", s:"jack", tag:"noun / verb", mean:"moving your body to stay fit", ex:"Exercise is good for your heart."},
+  {p:"energetic", s:"energy", tag:"adjective", mean:"full of energy, ready to move", ex:"I feel energetic after my morning run."},
+  {p:"a bike ride", s:"bike", tag:"noun phrase", mean:"a trip on a bicycle", ex:"We went for a bike ride on Saturday."}
+];
+const byP = Object.fromEntries(WORDS.map(w=>[w.p,w]));
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const cap = s => s[0].toUpperCase()+s.slice(1);
+
+/* ---------- voice ---------- */
+let rate=0.75, voice=null; const synth=window.speechSynthesis;
+if(!synth) document.getElementById("novoice").hidden=false;
+function pickVoice(){ if(!synth) return; const vs=synth.getVoices().filter(v=>/^en[-_]/i.test(v.lang));
+  voice=vs.find(v=>/Google US English|Samantha|Aria|Jenny/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs[0]||null; }
+if(synth){ pickVoice(); synth.onvoiceschanged=pickVoice; }
+function say(text,onend){ if(!synth){onend&&onend();return;} synth.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; if(voice) u.voice=voice; if(onend) u.onend=onend; synth.speak(u); }
+document.querySelectorAll(".speed button").forEach(b=>b.addEventListener("click",()=>{
+  rate=+b.dataset.rate; document.querySelectorAll(".speed button").forEach(x=>x.setAttribute("aria-pressed",x===b)); say("Let's get moving!"); }));
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  ["learn","t1","t2"].forEach(id=>document.getElementById(id).hidden=id!==t.dataset.panel);
+  if(synth) synth.cancel();
+}));
+
+/* ---------- learn ---------- */
+const cards=document.getElementById("cards");
+WORDS.forEach((w,i)=>{
+  const c=document.createElement("article"); c.className="card";
+  c.innerHTML=`<div class="stage">${sceneSVG(w.s,w.p)}</div>
+    <span class="tag">${w.tag}</span>
+    <h3 class="phrase">${w.p}</h3>
+    <p class="mean">${cap(w.mean)}.</p>
+    <p class="ex">“${w.ex}”</p>
+    <button class="listen" type="button" id="listen-${i}">🔊 Listen</button>`;
+  c.querySelector("button").addEventListener("click",()=>say(w.p,()=>setTimeout(()=>say(w.ex),350)));
+  cards.appendChild(c);
+});
+
+/* rep counter for the "working out" scene */
+let rep=1; setInterval(()=>{ rep=rep%10+1; document.querySelectorAll(".reps").forEach(t=>t.textContent=rep); },1000);
+
+/* ---------- shared ---------- */
+const progressHTML=(i,n)=>`<div class="progress"><span>${i+1} / ${n}</span><div class="bar"><i style="width:${(i/n)*100}%"></i></div></div>`;
+function finish(box,score,n,restart){
+  const stars=score>=n-1?"⭐⭐⭐":score>=Math.ceil(n/2)?"⭐⭐":"⭐";
+  const msg=score===n?"Excellent! All correct!":score>=Math.ceil(n/2)?"Well done!":"Good try! Practise again.";
+  box.innerHTML=`<div class="stars">${stars}</div><p class="score">${score} / ${n}</p><p class="feedback ok">${msg}</p>
+    <div class="row"><button class="btn solid" type="button" id="${box.id}-again">Play again</button></div>`;
+  say(msg); document.getElementById(box.id+"-again").addEventListener("click",restart);
+}
+
+/* ---------- Task 1: watch & choose ---------- */
+const t1={box:document.getElementById("t1-box")};
+function t1Start(){ t1.order=shuffle(WORDS); t1.i=0; t1.score=0; t1Render(); }
+function t1Render(){
+  const n=t1.order.length; if(t1.i>=n) return finish(t1.box,t1.score,n,t1Start);
+  const w=t1.order[t1.i]; t1.tries=0;
+  const opts=shuffle([w,...shuffle(WORDS.filter(x=>x!==w)).slice(0,3)]);
+  t1.box.innerHTML=progressHTML(t1.i,n)+
+    `<div class="stage big-stage">${sceneSVG(w.s,"Animation "+(t1.i+1))}</div>
+     <p class="q">What is this?</p>
+     <div class="choices">${opts.map((o,k)=>`<button class="choice" type="button" id="t1-opt-${k}" data-p="${o.p}">${o.p}</button>`).join("")}</div>
+     <p class="feedback" id="t1-fb" aria-live="polite"></p>
+     <div class="row" id="t1-next" hidden><button class="btn solid" type="button">Next ➜</button></div>`;
+  t1.box.querySelector("#t1-next button").addEventListener("click",()=>{t1.i++;t1Render();});
+  t1.box.querySelectorAll(".choice").forEach(c=>c.addEventListener("click",()=>{
+    const fb=document.getElementById("t1-fb");
+    if(c.dataset.p===w.p){
+      if(t1.tries===0) t1.score++;
+      c.classList.add("right"); t1.box.querySelectorAll(".choice").forEach(x=>x.disabled=true);
+      fb.className="feedback ok"; fb.textContent="✔ Yes! “"+w.ex+"”";
+      say(w.ex); document.getElementById("t1-next").hidden=false;
+    } else {
+      t1.tries++; c.classList.add("wrong"); c.disabled=true;
+      fb.className="feedback no"; fb.textContent="✘ Not this one. Watch again and try again.";
+      say("Try again.");
+    }
+  }));
+}
+t1Start();
+
+/* ---------- Task 2: complete the sentence ---------- */
+const SENT=[
+  {s:"Every morning before breakfast, I ___ in the park.", a:"go for a run", o:["go for a run","a bike ride","energetic"]},
+  {s:"Mia has a mat and she loves to stretch. She wants to ___ tonight.", a:"do yoga", o:["do yoga","energetic","workout routine"]},
+  {s:"I eat well, drink water and sleep eight hours. I have a ___.", a:"healthy lifestyle", o:["healthy lifestyle","energetic","do yoga"]},
+  {s:"Tom is at the gym. He is ___ with heavy weights.", a:"working out", o:["working out","a bike ride","do yoga"]},
+  {s:"My ___ is easy: I run on Monday, swim on Wednesday and go to the gym on Friday.", a:"workout routine", o:["workout routine","energetic","go for a run"]},
+  {s:"Doctors say ___ is good for your heart and your mind.", a:"exercise", o:["exercise","energetic","do yoga"]},
+  {s:"I slept well and ate a big breakfast. Now I feel ___!", a:"energetic", o:["energetic","exercise","working out"]},
+  {s:"It's sunny! Let's take our bikes and go for ___ by the river.", a:"a bike ride", o:["a bike ride","go for a run","energetic"]}
+];
+const t2={box:document.getElementById("t2-box")};
+function t2Start(){ t2.order=shuffle(SENT); t2.i=0; t2.score=0; t2Render(); }
+function t2Render(){
+  const n=t2.order.length; if(t2.i>=n) return finish(t2.box,t2.score,n,t2Start);
+  const q=t2.order[t2.i]; t2.tries=0; const parts=q.s.split("___"); const full=q.s.replace("___",q.a);
+  t2.box.innerHTML=progressHTML(t2.i,n)+
+    `<div class="t2-grid">
+       <div class="stage mystery" id="t2-stage">?</div>
+       <p class="sentence">${parts[0]}<span class="gap" id="t2-gap">?</span>${parts[1]}</p>
+     </div>
+     <div class="choices t2-choices">${shuffle(q.o).map((o,k)=>`<button class="choice" type="button" id="t2-opt-${k}" data-p="${o}">${o}</button>`).join("")}</div>
+     <p class="feedback" id="t2-fb" aria-live="polite"></p>
+     <div class="row" id="t2-next" hidden><button class="btn" type="button" id="t2-hear">🔊 Hear it again</button><button class="btn solid" type="button" id="t2-go">Next ➜</button></div>`;
+  document.getElementById("t2-go").addEventListener("click",()=>{t2.i++;t2Render();});
+  document.getElementById("t2-hear").addEventListener("click",()=>say(full));
+  t2.box.querySelectorAll(".choice").forEach(c=>c.addEventListener("click",()=>{
+    const fb=document.getElementById("t2-fb");
+    if(c.dataset.p===q.a){
+      if(t2.tries===0) t2.score++;
+      c.classList.add("right"); t2.box.querySelectorAll(".choice").forEach(x=>x.disabled=true);
+      document.getElementById("t2-gap").textContent=q.a;
+      const st=document.getElementById("t2-stage"); st.className="stage"; st.innerHTML=sceneSVG(byP[q.a].s,q.a);
+      fb.className="feedback ok"; fb.textContent="✔ Correct!"; say(full);
+      document.getElementById("t2-next").hidden=false;
+    } else {
+      t2.tries++; c.classList.add("wrong"); c.disabled=true;
+      fb.className="feedback no"; fb.textContent="✘ Not this one. Read the sentence again."; say("Try again.");
+    }
+  }));
+}
+t2Start();
+</script>
+
+</body></html>
